@@ -25,17 +25,47 @@ export default async function handler(request, response) {
     return response.status(500).json({ error: 'El desarrollador no ha configurado la clave de API en el servidor' });
   }
 
-  const fullPrompt = `Eres un analista inmobiliario experto. Responde de forma objetiva y en el formato JSON especificado. No añadas texto introductorio, solo el objeto JSON.
+  const fullPrompt = `
+Actúa como un analista de inversiones inmobiliarias para un cliente que busca oportunidades de inversión para alquilar (buy-to-let).
+Tu análisis debe ser objetivo, cuantitativo y presentarse exclusivamente en el formato JSON especificado, sin ningún texto introductorio.
 
-Aquí están los datos para analizar:
-- Título: ${propertyData.titulo || 'No disponible'}
-- Precio: ${propertyData.precio || 0} €
-- Superficie: ${propertyData.superficie || 'No disponible'} m²
-- Dirección: ${propertyData.direccion || 'No disponible'}
+**DATOS DEL INMUEBLE:**
+- Titulo: "${propertyData.titulo || 'No disponible'}"
+- Ubicación Precisa (Barrio, Municipio): "${propertyData.municipio || 'No disponible'}"
+- Precio de Venta: ${propertyData.precio || 0} €
+- Superficie: ${propertyData.superficie || 0} m²
+- Habitaciones: ${propertyData.habitaciones || 0}
+- Precio por m²: ${propertyData.precioPorM2 || 0} €/m²
 - URL: ${propertyData.url || 'No disponible'}
-  
-Evalúa: Oportunidad (🟢 buena, 🟡 media, 🔴 mala) con explicación, Rentabilidad estimada (% anual bruta/neta), y Factores clave.
-Responde en JSON: {"oportunidad": "🟢", "mensaje": "Explicación", "rentabilidad": 5.2}`;
+
+**ANÁLISIS REQUERIDO:**
+1.  **Oportunidad (Semáforo):** Evalúa la inversión con un único emoji: "🟢" (Buena), "🟡" (Media), o "🔴" (Mala), basándote en la relación entre el precio/m², la ubicación precisa y el potencial de alquiler.
+2.  **Resumen Ejecutivo:** Un párrafo corto (2-3 frases) con tu conclusión principal.
+3.  **Análisis de Rentabilidad:**
+    - Estima un alquiler mensual realista para la zona y tipo de inmueble.
+    - Calcula la rentabilidad bruta anual.
+4.  **Puntos a Favor (Pros):** Enumera en una lista 2-3 ventajas clave.
+5.  **Riesgos y Puntos en Contra (Contras):** Enumera en una lista 2-3 desventajas o riesgos.
+6.  **Perfil del Inquilino Ideal:** Describe brevemente el tipo de inquilino más probable.
+
+**FORMATO DE SALIDA (JSON ESTRICTO):**
+{
+  "oportunidad": "🟢",
+  "resumen": "El precio por metro cuadrado está por debajo de la media de la zona, ofreciendo un buen potencial de revalorización. La rentabilidad bruta estimada es atractiva para el mercado actual.",
+  "rentabilidad": {
+    "alquiler_mensual_estimado": 1200,
+    "bruta_anual_estimada": 5.8
+  },
+  "pros": [
+    "Precio por m² competitivo para 'Ubicación Precisa'.",
+    "Ubicación con alta demanda de alquiler por parte de familias."
+  ],
+  "contras": [
+    "La cocina puede requerir una actualización para maximizar el alquiler.",
+    "Propiedad interior, podría tener menos luz natural."
+  ],
+  "perfil_inquilino": "Parejas jóvenes o profesionales que buscan una primera vivienda en una zona bien comunicada."
+}`;
 
   try {
     const apiResponse = await fetch('https://api.x.ai/v1/chat/completions', {
