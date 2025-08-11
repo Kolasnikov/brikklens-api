@@ -38,7 +38,7 @@ Actúa como un analista senior de inversiones inmobiliarias. Tu cliente es un in
 - URL: ${propertyData.url || 'No disponible'}
 
 **ANÁLISIS REQUERIDO:**
-Tu tarea es realizar un análisis proforma completo. Para ello, debes estimar los datos que faltan basándote en estándares de mercado para la "Ubicación Precisa" proporcionada. **Es crucial que declares todos los supuestos que utilices.**
+Tu tarea es realizar un análisis proforma completo. Para ello, debes estimar los datos que faltan basándote en estándares de mercado para la "Ubicación Precisa" proporcionada y los supuestos fijos indicados. Es crucial que declares todos los supuestos que utilices.
 
 1.  **VEREDICTO Y RESUMEN:**
     - **Semáforo:** Un único emoji ("🟢", "🟡", "🔴").
@@ -46,41 +46,45 @@ Tu tarea es realizar un análisis proforma completo. Para ello, debes estimar lo
     - **Resumen Ejecutivo:** 2-3 frases resumiendo tu conclusión.
 
 2.  **ANÁLISIS FINANCIERO PROFORMA:**
-    - **Supuestos Clave:** Debes listar los supuestos utilizados para el cálculo: LTV (Loan-to-Value), tipo de interés, plazo de la hipoteca, % de gastos de compra y coste de reforma estimado.
+    - **Supuestos Clave:** Debes listar los supuestos utilizados. Para la hipoteca, asume siempre un **tipo de interés fijo del 3% anual**.
     - **Capital Inicial Aportado (Estimado):** Calcula el desembolso inicial (Entrada + Gastos de Compra + Reforma).
-    - **Gastos Operativos Mensuales (Estimados):** Estima el IBI, comunidad, seguros y un 1% del valor del inmueble anual para mantenimiento, y súmalo todo en una cifra mensual.
-    - **Hipoteca Mensual (Estimada):** Calcula la cuota mensual basada en tus supuestos.
-    - **Cash Flow Mensual (Estimado):** Calcula (Alquiler Mensual Estimado - Gastos Operativos Mensuales - Hipoteca Mensual).
-    - **Rentabilidad Neta Anual (Estimada):** Calcula la rentabilidad neta.
+    - **Justificación del Alquiler:** Justifica brevemente (1-2 frases) tu estimación de alquiler.
+    - **Gastos Operativos Mensuales (Estimados):** Estima IBI, comunidad, seguro y mantenimiento.
+    - **Hipoteca Mensual (Estimada):** Calcula la cuota mensual basada en tus supuestos (LTV 80%, 30 años, 3% interés).
+    - **Cash Flow Mensual (Estimado):** Calcula (Alquiler - Gastos - Hipoteca).
+    - **Rentabilidad Bruta Anual (Estimada):** Calcula (Alquiler Anual / (Precio de Venta + Gastos de Compra)). // <-- AÑADIDO
+    - **Rentabilidad Neta Anual (Estimada).**
     - **ROCE (Return on Capital Employed) Anual (Estimado):** Calcula (Cash Flow Anual / Capital Inicial Aportado).
 
 3.  **ANÁLISIS DE MERCADO:**
-    - **Benchmark de Precio:** Compara el precio/m² del inmueble con la media de su zona.
+    - **Benchmark de Precio:** Compara el precio/m² con la media de la zona.
     - **Potencial de Revalorización:** Estima el potencial a 3-5 años (Bajo, Medio, Alto).
 
 4.  **ESTRATEGIA DE INVERSIÓN:**
-    - **Estrategia de Valor Añadido:** Sugiere 2 acciones concretas para aumentar el valor o el alquiler.
-    - **Puntos de Negociación:** Sugiere 1-2 puntos basados en los contras para negociar el precio a la baja.
-    - **Perfil de Inversor Ideal:** Describe para qué tipo de inversor es esta propiedad.
+    - **Estrategia de Valor Añadido:** Sugiere 2 acciones concretas.
+    - **Puntos de Negociación:** Sugiere 1-2 puntos para negociar el precio a la baja.
+    - **Perfil del Inquilino Ideal:** Describe el tipo de persona/familia que probablemente alquilaría esta propiedad.
 
 **FORMATO DE SALIDA (JSON ESTRICTO):**
 {
   "semaforo": "🟢",
   "veredicto": "Sólida Oportunidad de Cash Flow",
-  "resumen": "Propiedad con un precio/m² ajustado a mercado para '${propertyData.municipio}'. Genera un cash flow positivo desde el primer mes bajo supuestos de financiación estándar.",
+  "resumen": "Propiedad con un precio/m² ajustado a mercado para '${propertyData.municipio}'. Genera un cash flow positivo desde el primer mes bajo los supuestos de financiación estándar.",
   "analisis_financiero": {
     "supuestos": {
       "ltv_financiacion": 80,
-      "tipo_interes_anual": 3.8,
+      "tipo_interes_anual": 3.0,
       "plazo_hipoteca_anos": 30,
       "gastos_compra_porcentaje": 10,
       "coste_reforma_estimado": 2500
     },
     "capital_inicial_aportado": 65400,
     "alquiler_mensual_estimado": 1200,
+    "justificacion_alquiler": "Basado en alquileres de pisos de características similares en la misma zona, que oscilan entre 1100€ y 1300€.",
     "hipoteca_mensual_estimada": 850,
     "gastos_operativos_mensuales": 150,
     "cash_flow_mensual_estimado": 200,
+    "rentabilidad_bruta_anual_estimada": 6.8, // <-- AÑADIDO
     "rentabilidad_neta_anual_estimada": 4.5,
     "roce_anual_estimado": 9.2
   },
@@ -94,10 +98,9 @@ Tu tarea es realizar un análisis proforma completo. Para ello, debes estimar lo
       "Instalar un sistema de A/C para atraer inquilinos de mayor calidad."
     ],
     "puntos_negociacion": [
-      "La certificación energética es baja, usar como argumento para una rebaja de 3.000€.",
-      "El estado de las ventanas puede requerir una negociación adicional."
+      "La certificación energética es baja, usar como argumento para una rebaja de 3.000€."
     ],
-    "perfil_inversor": "Ideal para un inversor que busca un flujo de caja estable y no le importa una revalorización moderada."
+    "perfil_inquilino": "Ideal para una pareja joven o profesionales que trabajan en el centro y buscan una zona bien comunicada."
   }
 }`;
 
