@@ -26,8 +26,7 @@ export default async function handler(request, response) {
   }
 
   const fullPrompt = `
-Actúa como un analista de inversiones inmobiliarias para un cliente que busca oportunidades de inversión para alquilar (buy-to-let).
-Tu análisis debe ser objetivo, cuantitativo y presentarse exclusivamente en el formato JSON especificado, sin ningún texto introductorio.
+Actúa como un analista senior de inversiones inmobiliarias. Tu cliente es un inversor particular que busca propiedades para comprar y alquilar (buy-to-let) en España. Tu análisis debe ser riguroso, objetivo, cuantitativo y presentarse exclusivamente en el formato JSON especificado, sin ningún texto introductorio.
 
 **DATOS DEL INMUEBLE:**
 - Titulo: "${propertyData.titulo || 'No disponible'}"
@@ -39,33 +38,67 @@ Tu análisis debe ser objetivo, cuantitativo y presentarse exclusivamente en el 
 - URL: ${propertyData.url || 'No disponible'}
 
 **ANÁLISIS REQUERIDO:**
-- **Basa tu análisis de precio, alquiler y demanda fundamentalmente en la 'Ubicación Precisa' proporcionada.** Es el dato más importante.
-- **Veredicto:** Proporciona un veredicto claro y conciso (ej. "Buena Inversión", "Precio Adecuado", "Inversión Arriesgada").
-- **Semáforo:** Proporciona un único emoji de semáforo ("🟢", "🟡", "🔴") que corresponda al veredicto.
-- **Resumen Ejecutivo:** Un párrafo corto (2-3 frases) con tu conclusión principal.
-- **Análisis de Rentabilidad:** Estima un alquiler mensual realista y calcula la rentabilidad bruta anual.
-- **Puntos a Favor (Pros):** Enumera 2-3 ventajas clave.
-- **Riesgos y Puntos en Contra (Contras):** Enumera 2-3 desventajas o riesgos.
-- **Perfil del Inquilino Ideal:** Describe brevemente el tipo de inquilino más probable.
+Tu tarea es realizar un análisis proforma completo. Para ello, debes estimar los datos que faltan basándote en estándares de mercado para la "Ubicación Precisa" proporcionada. **Es crucial que declares todos los supuestos que utilices.**
+
+1.  **VEREDICTO Y RESUMEN:**
+    - **Semáforo:** Un único emoji ("🟢", "🟡", "🔴").
+    - **Veredicto:** Un título claro y conciso (ej. "Sólida Oportunidad de Cash Flow", "Alto Potencial de Revalorización", "Inversión de Alto Riesgo").
+    - **Resumen Ejecutivo:** 2-3 frases resumiendo tu conclusión.
+
+2.  **ANÁLISIS FINANCIERO PROFORMA:**
+    - **Supuestos Clave:** Debes listar los supuestos utilizados para el cálculo: LTV (Loan-to-Value), tipo de interés, plazo de la hipoteca, % de gastos de compra y coste de reforma estimado.
+    - **Capital Inicial Aportado (Estimado):** Calcula el desembolso inicial (Entrada + Gastos de Compra + Reforma).
+    - **Gastos Operativos Mensuales (Estimados):** Estima el IBI, comunidad, seguros y un 1% del valor del inmueble anual para mantenimiento, y súmalo todo en una cifra mensual.
+    - **Hipoteca Mensual (Estimada):** Calcula la cuota mensual basada en tus supuestos.
+    - **Cash Flow Mensual (Estimado):** Calcula (Alquiler Mensual Estimado - Gastos Operativos Mensuales - Hipoteca Mensual).
+    - **Rentabilidad Neta Anual (Estimada):** Calcula la rentabilidad neta.
+    - **ROCE (Return on Capital Employed) Anual (Estimado):** Calcula (Cash Flow Anual / Capital Inicial Aportado).
+
+3.  **ANÁLISIS DE MERCADO:**
+    - **Benchmark de Precio:** Compara el precio/m² del inmueble con la media de su zona.
+    - **Potencial de Revalorización:** Estima el potencial a 3-5 años (Bajo, Medio, Alto).
+
+4.  **ESTRATEGIA DE INVERSIÓN:**
+    - **Estrategia de Valor Añadido:** Sugiere 2 acciones concretas para aumentar el valor o el alquiler.
+    - **Puntos de Negociación:** Sugiere 1-2 puntos basados en los contras para negociar el precio a la baja.
+    - **Perfil de Inversor Ideal:** Describe para qué tipo de inversor es esta propiedad.
 
 **FORMATO DE SALIDA (JSON ESTRICTO):**
 {
   "semaforo": "🟢",
-  "veredicto": "Buena Oportunidad de Inversión",
-  "resumen": "El precio por metro cuadrado está significativamente por debajo de la media para '${propertyData.municipio}', lo que sugiere un excelente potencial de revalorización. La demanda de alquiler en esta zona es alta.",
-  "rentabilidad": {
-    "alquiler_mensual_estimado": 750,
-    "bruta_anual_estimada": 7.5
+  "veredicto": "Sólida Oportunidad de Cash Flow",
+  "resumen": "Propiedad con un precio/m² ajustado a mercado para '${propertyData.municipio}'. Genera un cash flow positivo desde el primer mes bajo supuestos de financiación estándar.",
+  "analisis_financiero": {
+    "supuestos": {
+      "ltv_financiacion": 80,
+      "tipo_interes_anual": 3.8,
+      "plazo_hipoteca_anos": 30,
+      "gastos_compra_porcentaje": 10,
+      "coste_reforma_estimado": 2500
+    },
+    "capital_inicial_aportado": 65400,
+    "alquiler_mensual_estimado": 1200,
+    "hipoteca_mensual_estimada": 850,
+    "gastos_operativos_mensuales": 150,
+    "cash_flow_mensual_estimado": 200,
+    "rentabilidad_neta_anual_estimada": 4.5,
+    "roce_anual_estimado": 9.2
   },
-  "pros": [
-    "Precio por m² muy competitivo para la zona.",
-    "Alto potencial de alquiler por su proximidad a servicios."
-  ],
-  "contras": [
-    "El edificio podría necesitar reformas en zonas comunes a medio plazo.",
-    "El interior requiere una actualización para maximizar la renta."
-  ],
-  "perfil_inquilino": "Parejas jóvenes o profesionales."
+  "analisis_mercado": {
+    "benchmark_precio_m2": "En la media de la zona. Ni una ganga ni sobrevalorado.",
+    "potencial_revalorizacion": "Medio"
+  },
+  "estrategia_inversion": {
+    "valor_anadido": [
+      "Actualizar la cocina con un presupuesto de 2.500€ podría incrementar el alquiler en 50€/mes.",
+      "Instalar un sistema de A/C para atraer inquilinos de mayor calidad."
+    ],
+    "puntos_negociacion": [
+      "La certificación energética es baja, usar como argumento para una rebaja de 3.000€.",
+      "El estado de las ventanas puede requerir una negociación adicional."
+    ],
+    "perfil_inversor": "Ideal para un inversor que busca un flujo de caja estable y no le importa una revalorización moderada."
+  }
 }`;
 
   try {
