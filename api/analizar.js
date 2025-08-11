@@ -42,19 +42,19 @@ Tu tarea es realizar un análisis proforma completo. Para ello, debes estimar lo
 
 1.  **VEREDICTO Y RESUMEN:**
     - **Semáforo:** Un único emoji ("🟢", "🟡", "🔴").
-    - **Veredicto:** Un título claro y conciso (ej. "Sólida Oportunidad de Cash Flow", "Alto Potencial de Revalorización", "Inversión de Alto Riesgo").
+    - **Veredicto:** Un título claro y conciso.
     - **Resumen Ejecutivo:** 2-3 frases resumiendo tu conclusión.
 
 2.  **ANÁLISIS FINANCIERO PROFORMA:**
-    - **Supuestos Clave:** Debes listar los supuestos utilizados. Para la hipoteca, asume siempre un **tipo de interés fijo del 3% anual**.
-    - **Capital Inicial Aportado (Estimado):** Calcula el desembolso inicial (Entrada + Gastos de Compra + Reforma).
-    - **Justificación del Alquiler:** Justifica brevemente (1-2 frases) tu estimación de alquiler.
-    - **Gastos Operativos Mensuales (Estimados):** Estima IBI, comunidad, seguro y mantenimiento.
+    - **Supuestos Clave:** Debes listar los supuestos utilizados (LTV, tipo de interés, plazo, % gastos de compra).
+    - **Capital Inicial Aportado (Estimado):** Calcula el desembolso inicial (Entrada + Gastos de Compra).
+    - **Justificación del Alquiler:** Justifica brevemente tu estimación de alquiler.
+    // --- CAMBIO: Petición de desglose de gastos ---
+    - **Gastos Operativos Mensuales (Estimados):** Estima y desglosa en un objeto el IBI, la comunidad, el seguro y el mantenimiento. Calcula también el total.
     - **Hipoteca Mensual (Estimada):** Calcula la cuota mensual basada en tus supuestos (LTV 80%, 30 años, 3% interés).
-    - **Cash Flow Mensual (Estimado):** Calcula (Alquiler - Gastos - Hipoteca).
-    - **Rentabilidad Bruta Anual (Estimada):** Calcula (Alquiler Anual / (Precio de Venta + Gastos de Compra)). // <-- AÑADIDO
-    - **Rentabilidad Neta Anual (Estimada).**
-    - **ROCE (Return on Capital Employed) Anual (Estimado):** Calcula (Cash Flow Anual / Capital Inicial Aportado).
+    - **Cash Flow Mensual (Estimado):** Calcula (Alquiler - Gastos Totales - Hipoteca).
+    - **Rentabilidad Bruta y Neta Anual (Estimada).**
+    - **ROCE Anual (Estimado):** Calcula (Cash Flow Anual / Capital Inicial Aportado).
 
 3.  **ANÁLISIS DE MERCADO:**
     - **Benchmark de Precio:** Compara el precio/m² con la media de la zona.
@@ -62,46 +62,43 @@ Tu tarea es realizar un análisis proforma completo. Para ello, debes estimar lo
 
 4.  **ESTRATEGIA DE INVERSIÓN:**
     - **Estrategia de Valor Añadido:** Sugiere 2 acciones concretas.
-    - **Puntos de Negociación:** Sugiere 1-2 puntos para negociar el precio a la baja.
-    - **Perfil del Inquilino Ideal:** Describe el tipo de persona/familia que probablemente alquilaría esta propiedad.
+    - **Puntos de Negociación:** Sugiere 1-2 puntos para negociar.
+    - **Perfil del Inquilino Ideal:** Describe el tipo de persona/familia que alquilaría la propiedad.
 
 **FORMATO DE SALIDA (JSON ESTRICTO):**
 {
   "semaforo": "🟢",
   "veredicto": "Sólida Oportunidad de Cash Flow",
-  "resumen": "Propiedad con un precio/m² ajustado a mercado para '${propertyData.municipio}'. Genera un cash flow positivo desde el primer mes bajo los supuestos de financiación estándar.",
+  "resumen": "Propiedad con un precio/m² ajustado a mercado para '${propertyData.municipio}'. Genera un cash flow positivo desde el primer mes.",
   "analisis_financiero": {
     "supuestos": {
       "ltv_financiacion": 80,
       "tipo_interes_anual": 3.0,
       "plazo_hipoteca_anos": 30,
       "gastos_compra_porcentaje": 10,
-      "coste_reforma_estimado": 2500
+      "coste_reforma_estimado": 0 // <-- CAMBIO: Eliminada la estimación de reforma
     },
-    "capital_inicial_aportado": 65400,
+    "capital_inicial_aportado": 62900, // Ajustado para no incluir reforma
     "alquiler_mensual_estimado": 1200,
-    "justificacion_alquiler": "Basado en alquileres de pisos de características similares en la misma zona, que oscilan entre 1100€ y 1300€.",
+    "justificacion_alquiler": "Basado en alquileres de pisos similares en la misma zona.",
     "hipoteca_mensual_estimada": 850,
-    "gastos_operativos_mensuales": 150,
+    // --- CAMBIO: Gastos ahora es un objeto con desglose ---
+    "gastos_operativos_mensuales": {
+        "total": 150,
+        "desglose": {
+            "ibi": 40,
+            "comunidad": 60,
+            "seguro": 20,
+            "mantenimiento": 30
+        }
+    },
     "cash_flow_mensual_estimado": 200,
-    "rentabilidad_bruta_anual_estimada": 6.8, // <-- AÑADIDO
+    "rentabilidad_bruta_anual_estimada": 6.8,
     "rentabilidad_neta_anual_estimada": 4.5,
     "roce_anual_estimado": 9.2
   },
-  "analisis_mercado": {
-    "benchmark_precio_m2": "En la media de la zona. Ni una ganga ni sobrevalorado.",
-    "potencial_revalorizacion": "Medio"
-  },
-  "estrategia_inversion": {
-    "valor_anadido": [
-      "Actualizar la cocina con un presupuesto de 2.500€ podría incrementar el alquiler en 50€/mes.",
-      "Instalar un sistema de A/C para atraer inquilinos de mayor calidad."
-    ],
-    "puntos_negociacion": [
-      "La certificación energética es baja, usar como argumento para una rebaja de 3.000€."
-    ],
-    "perfil_inquilino": "Ideal para una pareja joven o profesionales que trabajan en el centro y buscan una zona bien comunicada."
-  }
+  "analisis_mercado": { /* ... */ },
+  "estrategia_inversion": { /* ... */ }
 }`;
 
   try {
