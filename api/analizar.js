@@ -26,7 +26,7 @@ export default async function handler(request, response) {
   }
 
   const fullPrompt = `
-Actúa como un analista senior de inversiones inmobiliarias. Tu cliente es un inversor particular que busca propiedades para comprar y alquilar (buy-to-let) en España. Tu análisis debe ser riguroso, objetivo, cuantitativo y presentarse exclusivamente en el formato JSON especificado, sin ningún texto introductorio.
+Actúa como un analista senior de inversiones inmobiliarias para un cliente que busca propiedades para comprar y alquilar (buy-to-let) en España. Tu análisis debe ser riguroso, objetivo, cuantitativo y presentarse exclusivamente en el formato JSON especificado, sin ningún texto introductorio.
 
 **DATOS DEL INMUEBLE:**
 - Titulo: "${propertyData.titulo || 'No disponible'}"
@@ -46,10 +46,9 @@ Tu tarea es realizar un análisis proforma completo. Para ello, debes estimar lo
     - **Resumen Ejecutivo:** 2-3 frases resumiendo tu conclusión.
 
 2.  **ANÁLISIS FINANCIERO PROFORMA:**
-    - **Supuestos Clave:** Debes listar los supuestos utilizados (LTV, tipo de interés, plazo, % gastos de compra).
+    - **Supuestos Clave:** Debes listar los supuestos utilizados (LTV, tipo de interés, plazo, % gastos de compra). La reforma se asume en 0.
     - **Capital Inicial Aportado (Estimado):** Calcula el desembolso inicial (Entrada + Gastos de Compra).
     - **Justificación del Alquiler:** Justifica brevemente tu estimación de alquiler.
-    // --- CAMBIO: Petición de desglose de gastos ---
     - **Gastos Operativos Mensuales (Estimados):** Estima y desglosa en un objeto el IBI, la comunidad, el seguro y el mantenimiento. Calcula también el total.
     - **Hipoteca Mensual (Estimada):** Calcula la cuota mensual basada en tus supuestos (LTV 80%, 30 años, 3% interés).
     - **Cash Flow Mensual (Estimado):** Calcula (Alquiler - Gastos Totales - Hipoteca).
@@ -57,48 +56,56 @@ Tu tarea es realizar un análisis proforma completo. Para ello, debes estimar lo
     - **ROCE Anual (Estimado):** Calcula (Cash Flow Anual / Capital Inicial Aportado).
 
 3.  **ANÁLISIS DE MERCADO:**
-    - **Benchmark de Precio:** Compara el precio/m² con la media de la zona.
+    - **Benchmark de Precio:** Es obligatorio que compares el precio/m² con la media de su zona.
     - **Potencial de Revalorización:** Estima el potencial a 3-5 años (Bajo, Medio, Alto).
 
 4.  **ESTRATEGIA DE INVERSIÓN:**
-    - **Estrategia de Valor Añadido:** Sugiere 2 acciones concretas.
-    - **Puntos de Negociación:** Sugiere 1-2 puntos para negociar.
-    - **Perfil del Inquilino Ideal:** Describe el tipo de persona/familia que alquilaría la propiedad.
+    // --- CAMBIO: Reformulado "Valor Añadido" ---
+    - **Oportunidades de Optimización:** Sugiere 1 o 2 acciones (que no impliquen grandes reformas) para mejorar la rentabilidad o el valor.
+    - **Puntos de Negociación:** Sugiere 1-2 puntos para negociar el precio a la baja.
+    - **Perfil del Inquilino Ideal:** Es obligatorio que describas el tipo de persona/familia que alquilaría esta propiedad.
 
 **FORMATO DE SALIDA (JSON ESTRICTO):**
 {
   "semaforo": "🟢",
   "veredicto": "Sólida Oportunidad de Cash Flow",
-  "resumen": "Propiedad con un precio/m² ajustado a mercado para '${propertyData.municipio}'. Genera un cash flow positivo desde el primer mes.",
+  "resumen": "Propiedad con un precio/m² ajustado a mercado para '${propertyData.municipio}'. Genera un cash flow positivo.",
   "analisis_financiero": {
     "supuestos": {
       "ltv_financiacion": 80,
       "tipo_interes_anual": 3.0,
       "plazo_hipoteca_anos": 30,
       "gastos_compra_porcentaje": 10,
-      "coste_reforma_estimado": 0 // <-- CAMBIO: Eliminada la estimación de reforma
+      "coste_reforma_estimado": 0
     },
-    "capital_inicial_aportado": 62900, // Ajustado para no incluir reforma
-    "alquiler_mensual_estimado": 1200,
-    "justificacion_alquiler": "Basado en alquileres de pisos similares en la misma zona.",
-    "hipoteca_mensual_estimada": 850,
-    // --- CAMBIO: Gastos ahora es un objeto con desglose ---
+    "capital_inicial_aportado": 35500,
+    "alquiler_mensual_estimado": 1300,
+    "justificacion_alquiler": "Basado en alquileres de pisos de 3 habitaciones en 'Collado Villalba', que oscilan entre 1200€ y 1400€.",
+    "hipoteca_mensual_estimada": 985,
     "gastos_operativos_mensuales": {
-        "total": 150,
-        "desglose": {
-            "ibi": 40,
-            "comunidad": 60,
-            "seguro": 20,
-            "mantenimiento": 30
-        }
+        "total": 220,
+        "desglose": {"ibi": 60, "comunidad": 100, "seguro": 25, "mantenimiento": 35}
     },
-    "cash_flow_mensual_estimado": 200,
-    "rentabilidad_bruta_anual_estimada": 6.8,
-    "rentabilidad_neta_anual_estimada": 4.5,
-    "roce_anual_estimado": 9.2
+    "cash_flow_mensual_estimado": 45,
+    "rentabilidad_bruta_anual_estimada": 4.9,
+    "rentabilidad_neta_anual_estimada": 3.2,
+    "roce_anual_estimado": 5.7
   },
-  "analisis_mercado": { /* ... */ },
-  "estrategia_inversion": { /* ... */ }
+  "analisis_mercado": {
+    "benchmark_precio_m2": "El precio/m² está un 5-7% por debajo de la media zonal.",
+    "potencial_revalorizacion": "Medio"
+  },
+  "estrategia_inversion": {
+    // --- CAMBIO: Renombrado a "oportunidades_optimizacion" ---
+    "oportunidades_optimizacion": [
+      "Alquilar amueblado para aumentar la renta mensual en aproximadamente 100-150€.",
+      "Ofrecer el garaje como un extra opcional por 50€ adicionales."
+    ],
+    "puntos_negociacion": [
+      "La certificación energética es baja, usar como argumento para una rebaja."
+    ],
+    "perfil_inquilino": "Ideal para una familia con hijos que busca espacio y tranquilidad en las afueras."
+  }
 }`;
 
   try {
