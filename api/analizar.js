@@ -61,7 +61,7 @@ Debes realizar un análisis proforma completo, declarando todos los supuestos qu
 
 4.  **ESTRATEGIA DE INVERSIÓN:**
     // --- CAMBIO: Instrucción más clara para "Valor Añadido" ---
-    - **Oportunidades de Optimización:** Sugiere 1 o 2 acciones (que no impliquen obras) para mejorar la rentabilidad. Ejemplos: "alquilar amueblado", "enfocar el marketing a un nicho específico", "alquiler por temporada". Si no encuentras ninguna, indica "No se aprecian optimizaciones claras sin reforma".
+    - **Estrategia de Valor Añadido:** Sugiere 1 o 2 acciones (que no impliquen obras) para mejorar la rentabilidad. Ejemplos: "alquilar amueblado", "enfocar el marketing a un nicho específico", "alquiler por temporada". Si no encuentras ninguna, indica "No se aprecian optimizaciones claras sin reforma".
     - **Puntos de Negociación:** Sugiere 1-2 puntos para negociar el precio a la baja.
     - **Perfil del Inquilino Ideal:** Es obligatorio que respondas en este campo, describiendo el tipo de persona/familia que alquilaría esta propiedad.
 
@@ -93,9 +93,9 @@ Debes realizar un análisis proforma completo, declarando todos los supuestos qu
     "potencial_revalorizacion": "Medio"
   },
   "estrategia_inversion": {
-    "oportunidades_optimizacion": [
-      "Alquilar amueblado para aumentar la renta mensual en aproximadamente 100-150€."
-    ],
+    "valor_anadido": [
+  "Alquilar amueblado para aumentar la renta mensual en aproximadamente 100-150€."
+],
     "puntos_negociacion": [
       "La certificación energética es baja, usar como argumento para una rebaja."
     ],
